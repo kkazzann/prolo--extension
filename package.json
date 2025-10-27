@@ -18,13 +18,25 @@
     "zip:firefox": "wxt zip -b firefox"
   },
   "dependencies": {
+    "apexcharts": "^5.3.5",
+    "chart.js": "^4.5.1",
+    "p-limit": "^7.1.1",
+    "p-min-delay": "^4.2.0",
+    "p-props": "^6.1.0",
+    "p-retry": "^7.1.0",
+    "p-timeout": "^7.0.1",
     "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "react-chartjs-2": "^5.3.0",
+    "react-dom": "^19.2.0",
+    "sass": "^1.93.2"
   },
   "devDependencies": {
+    "@iconify/react": "^6.0.2",
+    "@types/axios": "^0.14.4",
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",
     "@wxt-dev/module-react": "^1.1.5",
+    "axios": "^1.12.2",
     "prettier": "^3.6.2",
     "sass-embedded": "^1.93.2",
     "typescript": "^5.9.3",
