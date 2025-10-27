@@ -42,6 +42,13 @@ export default defineContentScript({
           rows: rows,
         });
       }
+
+      if (message.action === 'getWindowOrigin') {
+        sendResponse({
+          origin: window.origin,
+        });
+      }
+
       // keep channel open
       return true;
     });

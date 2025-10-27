@@ -1,0 +1,70 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+// logo and B symbol core colors
+$happy-red: #ff2f00;
+$cozy-brown: #750000;
+$warm-yellow: #fd9000;
+$soft-peach: #ffccb7;
+$calm-grey: #dbd9d7;
+
+// logo and B symbol base colours
+$dawn-grey: #332524;
+$urban-grey: #e8e8e8;
+$subtle-peach: #f6e7e6;
+$black: #000000;
+$white: #ffffff;
+
+$font-family: 'Poppins', 'Noto Color Emoji', 'Open Sans', sans-serif;
+
+// Additional brand colors for better UI
+$vibrant-orange: #ff6b35;
+$deep-red: #c41e3a;
+$pure-black: #0a0a0a;
+$pure-white: #ffffff;
+$light-grey: #f5f5f5;
+$dark-grey: #1a1a1a;
+$medium-grey: #6b6b6b;
+
+// --- section: theme colors ---
+
+// light:
+$light-background-color: $pure-white;
+$light-text-color-primary: $pure-black;
+$light-text-color-secondary: $medium-grey;
+$light-text-color-accent: $cozy-brown;
+$light-accent-color: $cozy-brown;
+$light-surface-color: $light-grey;
+$light-border-color: rgba(0, 0, 0, 0.1);
+
+// dark:
+$dark-background-color: $pure-black;
+$dark-text-color-primary: $pure-white;
+$dark-text-color-secondary: $medium-grey;
+$dark-text-color-accent: $happy-red;
+$dark-accent-color: $happy-red;
+$dark-surface-color: $dark-grey;
+$dark-border-color: rgba(255, 255, 255, 0.15);
+
+:root[data-theme='dark'] {
+  --theme-background-color: #{$dark-background-color};
+  --theme-surface-color: #{$dark-surface-color};
+  --theme-text-color: #{$dark-text-color-primary};
+  --theme-text-color-secondary: #{$dark-text-color-secondary};
+  --theme-text-color-accent: #{$dark-text-color-accent};
+  --theme-accent-color: #{$dark-accent-color};
+  --theme-border-color: #{$dark-border-color};
+  --theme-hover-bg: rgba(255, 255, 255, 0.05);
+  --theme-active-bg: rgba(255, 255, 255, 0.1);
+}
+
+:root[data-theme='light'] {
+  --theme-background-color: #{$light-background-color};
+  --theme-surface-color: #{$light-surface-color};
+  --theme-text-color: #{$light-text-color-primary};
+  --theme-text-color-secondary: #{$light-text-color-secondary};
+  --theme-text-color-accent: #{$light-text-color-accent};
+  --theme-accent-color: #{$light-accent-color};
+  --theme-border-color: #{$light-border-color};
+  --theme-hover-bg: rgba(0, 0, 0, 0.05);
+  --theme-active-bg: rgba(0, 0, 0, 0.1);
+}
