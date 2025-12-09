@@ -26,7 +26,7 @@ const links = {
     name: 'Development',
     icon: 'solar:code-circle-bold',
     links: [
-      { name: 'Constructor', url: 'https://github.com/BelianiRafal/Constructor_project', icon: 'simple-icons:github' },
+      { name: 'Constructor', url: 'https://github.com/BelianiRafal/Constructor-2.0-FINAL_Edition', icon: 'simple-icons:github' },
       { name: 'EXT', url: 'https://github.com/BelianiRafal/Extension/', icon: 'simple-icons:github' },
       { name: 'Translations API', url: 'https://github.com/kkazzann/translations-api', icon: 'simple-icons:github' },
       { name: 'EXT Rewritten', url: 'https://github.com/kkazzann/prolo--extension', icon: 'simple-icons:github' },

@@ -21,7 +21,7 @@ import { truncateMessage } from '../utils/truncateMessage';
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Filler, Tooltip);
 
 const projectsConfig = [
-  { name: 'Constructor', user: 'BelianiRafal', repo: 'Constructor_project', branch: 'future' },
+  { name: 'Constructor', user: 'BelianiRafal', repo: 'Constructor-2.0-FINAL_Edition', branch: 'playground' },
   { name: 'Extension', user: 'BelianiRafal', repo: 'Extension', branch: 'future' },
   { name: 'Extension for Graphics', user: 'BelianiRafal', repo: 'Extension-for-Graphics', branch: 'dev' },
   { name: 'Top Image Generator', user: 'kkazzann', repo: 'figma--top-image-title-generator', branch: 'main' },
