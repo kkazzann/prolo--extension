@@ -65,6 +65,8 @@ $dark-border-color: rgba(255, 255, 255, 0.15);
   --theme-text-color-accent: #{$light-text-color-accent};
   --theme-accent-color: #{$light-accent-color};
   --theme-border-color: #{$light-border-color};
-  --theme-hover-bg: rgba(0, 0, 0, 0.05);
-  --theme-active-bg: rgba(0, 0, 0, 0.1);
+  // --theme-hover-bg: rgba(0, 0, 0, 0.05);
+  --theme-hover-bg: rgba(255, 255, 255, 0.664);
+  // --theme-active-bg: rgba(0, 0, 0, 0.1);
+  --theme-active-bg: rgba(255, 255, 255, 0.699);
 }
