@@ -11,7 +11,6 @@ import { Icon } from '@iconify/react';
 import LinksHub from './components/LinksHub';
 import SearchBar from './components/SearchBar';
 import Projects from './components/Projects.tsx';
-import Snowfall from 'react-snowfall';
 
 export default function Home() {
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
@@ -48,7 +47,6 @@ export default function Home() {
 
   return (
     <div className={styles.home}>
-      <Snowfall />
       <div className={styles.floating}>
         {/* logo */}
         <img className={styles.logo} width={48} src={theme === 'light' ? logo_light : logo_dark} alt="Logo" />
