@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import styles from '../styles/FamilyTable.module.scss';
+import { shopToMentionTagMap } from '../lib/shopMaps';
+import { COLUMN_IDS } from '../api/checklistShared';
+import type { ChecklistTableData, ChecklistTableRow } from '../lib/types';
 import { TableHeaders } from './familytable/TableHeaders';
 import { TableRows } from './familytable/TableRows';
-import { shopToMentionTagMap } from '../lib/shopMaps';
-import type { ChecklistTableData, ChecklistTableRow } from '../lib/types';
 
 type FamilyTableProps = {
   data: ChecklistTableData;
@@ -17,10 +18,12 @@ const FamilyTable = ({ data }: FamilyTableProps) => {
     setRows(data.rows);
   }, [data.rows]);
 
-  const headers = data.headers;
+  const columns = data.columns;
 
   useEffect(() => {
-    if (!headers.includes('Translations') && !headers.includes('Test Request')) {
+    const hasTranslations = columns.some(column => column.id === COLUMN_IDS.TRANSLATIONS);
+    const hasTestRequest = columns.some(column => column.id === COLUMN_IDS.TEST_REQUEST);
+    if (!hasTranslations && !hasTestRequest) {
       return;
     }
 
@@ -28,14 +31,14 @@ const FamilyTable = ({ data }: FamilyTableProps) => {
     const testRequestTags = new Set<string>();
 
     rows.forEach(row => {
-      if (row.translations === 2) {
+      if ((row.columnStatuses?.[COLUMN_IDS.TRANSLATIONS] ?? row.translations) === 2) {
         const mentionTag = shopToMentionTagMap[row.shop];
         if (mentionTag) {
           translationTags.add(mentionTag);
         }
       }
 
-      if (row.testRequest === 2) {
+      if ((row.columnStatuses?.[COLUMN_IDS.TEST_REQUEST] ?? row.testRequest) === 2) {
         const mentionTag = shopToMentionTagMap[row.shop];
         if (mentionTag) {
           testRequestTags.add(mentionTag);
@@ -46,7 +49,7 @@ const FamilyTable = ({ data }: FamilyTableProps) => {
     let commentText = '';
 
     if (translationTags.size > 0) {
-      commentText += `${Array.from(translationTags).join(' ')} please translate!\n`;
+      commentText += `${Array.from(translationTags).join(' ')} please translate :)\n`;
     }
 
     if (testRequestTags.size > 0) {
@@ -54,13 +57,13 @@ const FamilyTable = ({ data }: FamilyTableProps) => {
     }
 
     document.dispatchEvent(new CustomEvent('richchat:set', { detail: { text: commentText.trim() } }));
-  }, [rows]);
+  }, [rows, columns]);
 
   return (
-    <div className={styles.familyTable} style={{ gridTemplateColumns: `repeat(${headers.length}, auto)` }}>
-      <TableHeaders headers={headers} rows={rows} />
+    <div className={styles.familyTable} style={{ gridTemplateColumns: `repeat(${columns.length}, auto)` }}>
+      <TableHeaders columns={columns} rows={rows} />
       <TableRows
-        headers={headers}
+        columns={columns}
         rows={rows}
         setRows={setRows}
         hoveredShop={hoveredShop}

@@ -1,5 +1,5 @@
 import type { ChecklistApiResponse, ChecklistStatus, ChecklistTableData, ChecklistTableRow } from '../lib/types';
-import { CGB_HEADERS, createRow, normalizeTitle, parseCheckpointDescription } from './checklistShared';
+import { createCgbColumns, createRow, normalizeTitle, parseCheckpointDescription } from './checklistShared';
 
 export const mapCgbChecklistsToTableData = (apiResponse: ChecklistApiResponse): ChecklistTableData => {
   const rowsByShop = new Map<string, ChecklistTableRow>();
@@ -19,7 +19,15 @@ export const mapCgbChecklistsToTableData = (apiResponse: ChecklistApiResponse): 
       return left.title.localeCompare(right.title);
     });
 
-  const dynamicHeaders = includedChecklists.map(checklist => checklist.title.trim()).filter(Boolean);
+  const dynamicColumns = includedChecklists
+    .map(checklist => ({ id: `cgb:${checklist.id}`, label: checklist.title.trim() }))
+    .filter(column => !!column.label);
+
+  const columnIdByChecklistId = new Map<string, string>();
+  for (const column of dynamicColumns) {
+    const checklistId = column.id.replace('cgb:', '');
+    columnIdByChecklistId.set(checklistId, column.id);
+  }
 
   const getRow = (shop: string, order: number) => {
     const existing = rowsByShop.get(shop);
@@ -34,8 +42,8 @@ export const mapCgbChecklistsToTableData = (apiResponse: ChecklistApiResponse): 
   };
 
   for (const checklist of includedChecklists) {
-    const checklistHeader = checklist.title.trim();
-    if (!checklistHeader) {
+    const checklistColumnId = columnIdByChecklistId.get(checklist.id);
+    if (!checklistColumnId) {
       continue;
     }
 
@@ -57,8 +65,10 @@ export const mapCgbChecklistsToTableData = (apiResponse: ChecklistApiResponse): 
         if (!row.cgbCheckpointRefs) {
           row.cgbCheckpointRefs = {};
         }
-        row.cgbStatuses[checklistHeader] = doneValue as ChecklistStatus;
-        row.cgbCheckpointRefs[checklistHeader] = { checklistId: checklist.id, checkpointId: checkpoint.id };
+        row.cgbStatuses[checklistColumnId] = doneValue as ChecklistStatus;
+        row.cgbCheckpointRefs[checklistColumnId] = { checklistId: checklist.id, checkpointId: checkpoint.id };
+        row.columnStatuses[checklistColumnId] = doneValue as ChecklistStatus;
+        row.columnCheckpointRefs[checklistColumnId] = { checklistId: checklist.id, checkpointId: checkpoint.id };
       }
     }
   }
@@ -71,5 +81,6 @@ export const mapCgbChecklistsToTableData = (apiResponse: ChecklistApiResponse): 
     return left.shop.localeCompare(right.shop);
   });
 
-  return { headers: ['SHOP', ...dynamicHeaders, ...CGB_HEADERS.slice(1)], rows, hasGroupedNslt: false };
+  const columns = createCgbColumns(dynamicColumns);
+  return { headers: columns.map(column => column.label), columns, rows, hasGroupedNslt: false };
 };

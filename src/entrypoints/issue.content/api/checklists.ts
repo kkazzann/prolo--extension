@@ -1,30 +1,16 @@
 import axios from 'axios';
-import { CGB_HEADERS, TABLE_HEADERS } from './checklistShared';
-import { mapCgbChecklistsToTableData } from './checklistCgbMapper';
-import { mapNewsletterChecklistsToTableData } from './checklistNewsletterMapper';
-import type {
-  ChecklistApiResponse,
-  ChecklistMode,
-  ChecklistTableData,
-  SpreadsheetTranslations,
-} from '../lib/types';
+import type { ChecklistApiResponse, ChecklistMode, ChecklistTableData, SpreadsheetTranslations } from '../lib/types';
+import { getIssueModePlugin } from './issueModePlugins';
 
-export const createEmptyTableData = (mode: ChecklistMode): ChecklistTableData => ({
-  headers: mode === 'cgb' ? CGB_HEADERS : TABLE_HEADERS,
-  rows: [],
-  hasGroupedNslt: false,
-});
+export const createEmptyTableData = (mode: ChecklistMode): ChecklistTableData =>
+  getIssueModePlugin(mode).createEmptyTableData();
 
 export const mapChecklistsToTableData = (
   apiResponse: ChecklistApiResponse,
   mode: ChecklistMode,
   spreadsheet?: SpreadsheetTranslations | null,
 ): ChecklistTableData => {
-  if (mode === 'cgb') {
-    return mapCgbChecklistsToTableData(apiResponse);
-  }
-
-  return mapNewsletterChecklistsToTableData(apiResponse, spreadsheet);
+  return getIssueModePlugin(mode).mapTableData(apiResponse, spreadsheet);
 };
 
 export const fetchChecklists = async (issueId: number) => {

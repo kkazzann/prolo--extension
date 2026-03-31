@@ -2,6 +2,17 @@ export type ChecklistStatus = 0 | 1 | 2;
 
 export type ChecklistMode = 'newsletter' | 'cgb' | null;
 
+export type ChecklistColumnKind = 'shop' | 'status' | 'request' | 'link';
+
+export type ChecklistColumn = {
+  id: string;
+  label: string;
+  kind: ChecklistColumnKind;
+  openAllLinks?: boolean;
+};
+
+export type ChecklistCheckpointRef = { checklistId: string; checkpointId: string };
+
 export type ChecklistTableRow = {
   shop: string;
   nsltId: string | null;
@@ -20,25 +31,29 @@ export type ChecklistTableRow = {
   bannersApproved: ChecklistStatus;
   bannersCheckedMobile: ChecklistStatus;
   bannersCheckedDesktop: ChecklistStatus;
+  columnStatuses: Record<string, ChecklistStatus>;
+  columnCheckpointRefs: Record<string, ChecklistCheckpointRef>;
+  columnValues: Record<string, string>;
   cgbStatuses?: Record<string, ChecklistStatus>;
-  cgbCheckpointRefs?: Record<string, { checklistId: string; checkpointId: string }>;
+  cgbCheckpointRefs?: Record<string, ChecklistCheckpointRef>;
   checkpointRefs: {
-    translations?: { checklistId: string; checkpointId: string };
-    testRequest?: { checklistId: string; checkpointId: string };
-    testSent?: { checklistId: string; checkpointId: string };
-    nsltAccepted?: { checklistId: string; checkpointId: string };
-    nsltAAccepted?: { checklistId: string; checkpointId: string };
-    nsltBAccepted?: { checklistId: string; checkpointId: string };
-    lpAccepted?: { checklistId: string; checkpointId: string };
-    bannersApproved?: { checklistId: string; checkpointId: string };
-    bannersCheckedMobile?: { checklistId: string; checkpointId: string };
-    bannersCheckedDesktop?: { checklistId: string; checkpointId: string };
+    translations?: ChecklistCheckpointRef;
+    testRequest?: ChecklistCheckpointRef;
+    testSent?: ChecklistCheckpointRef;
+    nsltAccepted?: ChecklistCheckpointRef;
+    nsltAAccepted?: ChecklistCheckpointRef;
+    nsltBAccepted?: ChecklistCheckpointRef;
+    lpAccepted?: ChecklistCheckpointRef;
+    bannersApproved?: ChecklistCheckpointRef;
+    bannersCheckedMobile?: ChecklistCheckpointRef;
+    bannersCheckedDesktop?: ChecklistCheckpointRef;
   };
   order: number;
 };
 
 export type ChecklistTableData = {
   headers: string[];
+  columns: ChecklistColumn[];
   rows: ChecklistTableRow[];
   hasGroupedNslt?: boolean;
 };

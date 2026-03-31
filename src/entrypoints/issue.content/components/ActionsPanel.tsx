@@ -65,6 +65,7 @@ type ActionsPanelProps = {
   tableData: ChecklistTableData | null;
   issueId: number;
   mode?: ChecklistMode;
+  showDashboardActions?: boolean;
   issueLinks?: IssueLink[];
   issueDate?: string;
   onGeneratedChecklist?: () => Promise<void> | void;
@@ -78,8 +79,16 @@ const toLpDatePath = (issueDate?: string): string | null => {
   return `/lp${year.slice(-2)}-${month}-${day}/`;
 };
 
-const ActionsPanel = ({ tableData, issueId, mode, issueLinks = [], issueDate, onGeneratedChecklist }: ActionsPanelProps) => {
-  const isCgb = mode === 'cgb';
+const ActionsPanel = ({
+  tableData,
+  issueId,
+  mode,
+  showDashboardActions,
+  issueLinks = [],
+  issueDate,
+  onGeneratedChecklist,
+}: ActionsPanelProps) => {
+  const shouldShowActions = showDashboardActions ?? mode !== 'cgb';
   const hasGroupedNslt = tableData?.hasGroupedNslt ?? false;
   const rows = tableData?.rows ?? [];
   const origin = window.location.origin;
@@ -148,7 +157,7 @@ const ActionsPanel = ({ tableData, issueId, mode, issueLinks = [], issueDate, on
         </div>
       )}
 
-      {!isCgb && (
+      {shouldShowActions && (
         <div className={styles.actionsGrid}>
           <ActionButton
             variant="primary"
@@ -212,7 +221,7 @@ const ActionsPanel = ({ tableData, issueId, mode, issueLinks = [], issueDate, on
         </div>
       </div>
 
-      {showGenerateModal && !isCgb && (
+      {showGenerateModal && shouldShowActions && (
         <GenerateChecklistModal
           issueId={issueId}
           onClose={() => setShowGenerateModal(false)}

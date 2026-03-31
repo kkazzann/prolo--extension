@@ -9,14 +9,17 @@ const isUrl = (value: string): boolean => {
   }
 };
 
-const parseFigmaVersions = (text: string): Array<{ type: 'OLD' | 'NEW' | 'FINAL'; url: string }> => {
-  const versions: Array<{ type: 'OLD' | 'NEW' | 'FINAL'; url: string }> = [];
-  const regex = /\b(OLD|NEW|FINAL)\b[\s:\-]*((?:https?:\/\/|www\.)\S+)/gi;
+const parseFigmaVersions = (text: string): Array<{ type: string; url: string }> => {
+  const versions: Array<{ type: string; url: string }> = [];
+  // viva chat gpt for this beautiful regex
+  const regex = /\b(OLD|NEW|FINAL)\b(?:\s*[-:]?\s*(\d+))?[\s:\-]*((?:https?:\/\/|www\.)\S+)/gi;
   let match: RegExpExecArray | null;
 
   while ((match = regex.exec(text)) !== null) {
-    const type = match[1].toUpperCase() as 'OLD' | 'NEW' | 'FINAL';
-    const rawUrl = match[2];
+    const baseType = match[1].toUpperCase();
+    const versionNumber = match[2];
+    const type = versionNumber ? `${baseType} ${versionNumber}` : baseType;
+    const rawUrl = match[3];
     const url = rawUrl.startsWith('www.') ? `https://${rawUrl}` : rawUrl;
     versions.push({ type, url });
   }

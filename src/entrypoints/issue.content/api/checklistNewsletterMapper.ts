@@ -1,7 +1,36 @@
 import { TABLE_SHOP_ORDER } from '../lib/shopConfig';
 import { CHECKLIST_TITLES_NORM } from '../lib/checklistTitles';
-import type { ChecklistApiResponse, ChecklistTableData, ChecklistTableRow, SpreadsheetTranslations } from '../lib/types';
-import { TABLE_HEADERS, createRow, normalizeTitle, parseCheckpointDescription } from './checklistShared';
+import type {
+  ChecklistApiResponse,
+  ChecklistTableData,
+  ChecklistTableRow,
+  SpreadsheetTranslations,
+} from '../lib/types';
+import {
+  COLUMN_IDS,
+  createNewsletterColumns,
+  createRow,
+  normalizeTitle,
+  parseCheckpointDescription,
+} from './checklistShared';
+
+const setStatus = (
+  row: ChecklistTableRow,
+  columnId: string,
+  value: 0 | 1,
+  ref?: { checklistId: string; checkpointId: string },
+) => {
+  row.columnStatuses[columnId] = value;
+  if (ref) {
+    row.columnCheckpointRefs[columnId] = ref;
+  }
+};
+
+const setValue = (row: ChecklistTableRow, columnId: string, value: string | null) => {
+  if (value) {
+    row.columnValues[columnId] = value;
+  }
+};
 
 export const mapNewsletterChecklistsToTableData = (
   apiResponse: ChecklistApiResponse,
@@ -39,6 +68,10 @@ export const mapNewsletterChecklistsToTableData = (
           for (const row of rowsByShop.values()) {
             row.nsltAccepted = doneValue;
             row.checkpointRefs.nsltAccepted = { checklistId: checklist.id, checkpointId: checkpoint.id };
+            setStatus(row, COLUMN_IDS.NSLT_ACCEPTED, doneValue, {
+              checklistId: checklist.id,
+              checkpointId: checkpoint.id,
+            });
           }
         }
 
@@ -48,6 +81,10 @@ export const mapNewsletterChecklistsToTableData = (
           for (const row of rowsByShop.values()) {
             row.nsltAAccepted = doneValue;
             row.checkpointRefs.nsltAAccepted = { checklistId: checklist.id, checkpointId: checkpoint.id };
+            setStatus(row, COLUMN_IDS.NSLT_A_ACCEPTED, doneValue, {
+              checklistId: checklist.id,
+              checkpointId: checkpoint.id,
+            });
           }
         }
 
@@ -57,6 +94,10 @@ export const mapNewsletterChecklistsToTableData = (
           for (const row of rowsByShop.values()) {
             row.nsltBAccepted = doneValue;
             row.checkpointRefs.nsltBAccepted = { checklistId: checklist.id, checkpointId: checkpoint.id };
+            setStatus(row, COLUMN_IDS.NSLT_B_ACCEPTED, doneValue, {
+              checklistId: checklist.id,
+              checkpointId: checkpoint.id,
+            });
           }
         }
 
@@ -65,6 +106,10 @@ export const mapNewsletterChecklistsToTableData = (
           for (const row of rowsByShop.values()) {
             row.lpAccepted = doneValue;
             row.checkpointRefs.lpAccepted = { checklistId: checklist.id, checkpointId: checkpoint.id };
+            setStatus(row, COLUMN_IDS.LP_ACCEPTED, doneValue, {
+              checklistId: checklist.id,
+              checkpointId: checkpoint.id,
+            });
           }
         }
 
@@ -81,13 +126,22 @@ export const mapNewsletterChecklistsToTableData = (
         if (checklistTitle === CHECKLIST_TITLES_NORM.NEWSLETTER_TRANSLATIONS) {
           row.translations = doneValue;
           row.checkpointRefs.translations = { checklistId: checklist.id, checkpointId: checkpoint.id };
+          setStatus(row, COLUMN_IDS.TRANSLATIONS, doneValue, {
+            checklistId: checklist.id,
+            checkpointId: checkpoint.id,
+          });
         }
 
         if (checklistTitle === CHECKLIST_TITLES_NORM.NEWSLETTER_TESTING_APPROVED) {
           row.nsltAccepted = doneValue;
           row.checkpointRefs.nsltAccepted = { checklistId: checklist.id, checkpointId: checkpoint.id };
+          setStatus(row, COLUMN_IDS.NSLT_ACCEPTED, doneValue, {
+            checklistId: checklist.id,
+            checkpointId: checkpoint.id,
+          });
           if (parsed.itemId) {
             row.nsltId = parsed.itemId;
+            setValue(row, COLUMN_IDS.NSLT_ID, parsed.itemId);
           }
         }
 
@@ -95,8 +149,13 @@ export const mapNewsletterChecklistsToTableData = (
           hasGroupedNslt = true;
           row.nsltAAccepted = doneValue;
           row.checkpointRefs.nsltAAccepted = { checklistId: checklist.id, checkpointId: checkpoint.id };
+          setStatus(row, COLUMN_IDS.NSLT_A_ACCEPTED, doneValue, {
+            checklistId: checklist.id,
+            checkpointId: checkpoint.id,
+          });
           if (parsed.itemId) {
             row.nsltAId = parsed.itemId;
+            setValue(row, COLUMN_IDS.NSLT_A_ID, parsed.itemId);
           }
         }
 
@@ -104,8 +163,13 @@ export const mapNewsletterChecklistsToTableData = (
           hasGroupedNslt = true;
           row.nsltBAccepted = doneValue;
           row.checkpointRefs.nsltBAccepted = { checklistId: checklist.id, checkpointId: checkpoint.id };
+          setStatus(row, COLUMN_IDS.NSLT_B_ACCEPTED, doneValue, {
+            checklistId: checklist.id,
+            checkpointId: checkpoint.id,
+          });
           if (parsed.itemId) {
             row.nsltBId = parsed.itemId;
+            setValue(row, COLUMN_IDS.NSLT_B_ID, parsed.itemId);
           }
         }
 
@@ -114,12 +178,21 @@ export const mapNewsletterChecklistsToTableData = (
             for (const allRow of rowsByShop.values()) {
               allRow.lpAccepted = doneValue;
               allRow.checkpointRefs.lpAccepted = { checklistId: checklist.id, checkpointId: checkpoint.id };
+              setStatus(allRow, COLUMN_IDS.LP_ACCEPTED, doneValue, {
+                checklistId: checklist.id,
+                checkpointId: checkpoint.id,
+              });
             }
           } else {
             row.lpAccepted = doneValue;
             row.checkpointRefs.lpAccepted = { checklistId: checklist.id, checkpointId: checkpoint.id };
+            setStatus(row, COLUMN_IDS.LP_ACCEPTED, doneValue, {
+              checklistId: checklist.id,
+              checkpointId: checkpoint.id,
+            });
             if (parsed.itemId) {
               row.lpId = parsed.itemId;
+              setValue(row, COLUMN_IDS.LP_ID, parsed.itemId);
             }
           }
         }
@@ -127,6 +200,7 @@ export const mapNewsletterChecklistsToTableData = (
         if (checklistTitle === CHECKLIST_TITLES_NORM.SENT_NSLT_LP_FOR_TESTING) {
           row.testSent = doneValue;
           row.checkpointRefs.testSent = { checklistId: checklist.id, checkpointId: checkpoint.id };
+          setStatus(row, COLUMN_IDS.TEST_SENT, doneValue, { checklistId: checklist.id, checkpointId: checkpoint.id });
         }
       }
     }
@@ -150,36 +224,16 @@ export const mapNewsletterChecklistsToTableData = (
   if (spreadsheet?.timer != null) {
     for (const row of rows) {
       row.timerDone = spreadsheet.timer[row.shop] ? 1 : 0;
+      setStatus(row, COLUMN_IDS.TIMER_DONE, row.timerDone);
     }
   }
   if (spreadsheet?.push != null) {
     for (const row of rows) {
       row.pushDone = spreadsheet.push[row.shop] ? 1 : 0;
+      setStatus(row, COLUMN_IDS.PUSH_DONE, row.pushDone);
     }
   }
 
-  const baseHeaders: string[] = hasGroupedNslt
-    ? [
-        'SHOP',
-        'Translations',
-        'Timer Done',
-        'Push Done',
-        'Test Sent',
-        'Test Request',
-        'NSLT A ID',
-        'NSLT A Accepted',
-        'NSLT B ID',
-        'NSLT B Accepted',
-        'LP ID',
-        'LP Accepted',
-      ]
-    : [...TABLE_HEADERS];
-
-  const headers = baseHeaders.filter(h => {
-    if (h === 'Timer Done' && spreadsheet?.timer == null) return false;
-    if (h === 'Push Done' && spreadsheet?.push == null) return false;
-    return true;
-  });
-
-  return { headers, rows, hasGroupedNslt };
+  const columns = createNewsletterColumns(hasGroupedNslt, spreadsheet?.timer != null, spreadsheet?.push != null);
+  return { headers: columns.map(column => column.label), columns, rows, hasGroupedNslt };
 };

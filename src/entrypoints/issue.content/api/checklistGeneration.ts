@@ -1,6 +1,11 @@
 import axios from 'axios';
 import { fetchChecklists } from './checklists';
-import { LP_CHECKPOINT_TEMPLATES, NEWSLETTER_SHOP_ORDER } from '../lib/shopConfig';
+import {
+  LP_CHECKPOINT_TEMPLATES,
+  LP_ID_ALLOCATION_ORDER,
+  LP_ID_GROUP_BY_SLUG,
+  NEWSLETTER_SHOP_ORDER,
+} from '../lib/shopConfig';
 import { CHECKLIST_TITLES } from '../lib/checklistTitles';
 
 export type GenerateChecklistPayload = {
@@ -44,12 +49,24 @@ const buildGeneratedCheckpointItems = (startId: string, mode: 'newsletter' | 'lp
   }
 
   if (mode === 'lp') {
+    const idByGroup = new Map<string, number>();
+    for (const group of LP_ID_ALLOCATION_ORDER) {
+      idByGroup.set(group, currentId);
+      currentId += 1;
+    }
+
     for (const item of LP_CHECKPOINT_TEMPLATES) {
+      const group = LP_ID_GROUP_BY_SLUG[item.slug] ?? item.slug;
+      const groupedId = idByGroup.get(group);
+
+      if (!groupedId) {
+        throw new Error(`Missing LP ID allocation group for slug: ${item.slug}`);
+      }
+
       items.push({
         slug: item.slug,
-        url: `${PROLO_BASE_URL}/shop_content.php?id=${currentId}&shop_id=${item.shopId}`,
+        url: `${PROLO_BASE_URL}/shop_content.php?id=${groupedId}&shop_id=${item.shopId}`,
       });
-      currentId += 1;
     }
   }
 
@@ -168,9 +185,7 @@ export const generateChecklist = async (
 
   const current = await fetchChecklists(issueId);
   const targetNormalized = normalizeTitle(checklistTitle);
-  const toDelete = current.checklists.filter(
-    cl => normalizeTitle(cl.title) === targetNormalized && (cl.checkpoints?.length ?? 0) === 1,
-  );
+  const toDelete = current.checklists.filter(cl => normalizeTitle(cl.title) === targetNormalized);
 
   for (const checklist of toDelete) {
     await removeChecklist(issueId, checklist.id);
@@ -189,7 +204,7 @@ export const generateChecklist = async (
   await updateChecklistTitle(issueId, checklistId, checklistTitle);
 
   await delay(REQUEST_DELAY_MS);
-  await saveCheckpoints(issueId, checklistId, checkpointItems);
+  await saveCheckpointsSeparately(issueId, checklistId, checkpointItems);
 
   return {
     checklistId,

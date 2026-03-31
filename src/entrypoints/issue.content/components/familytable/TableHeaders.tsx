@@ -1,18 +1,29 @@
 import styles from '../../styles/FamilyTable.module.scss';
 import { Icon } from '@iconify/react';
 import { getShopId } from '../../lib/shopIdMap';
-import type { ChecklistTableRow } from '../../lib/types';
+import type { ChecklistColumn, ChecklistTableRow } from '../../lib/types';
+import { COLUMN_IDS } from '../../api/checklistShared';
 
 type TableHeadersProps = {
-  headers: string[];
+  columns: ChecklistColumn[];
   rows: ChecklistTableRow[];
 };
 
-const openAllLinksFromColumn = (header: string, rows: ChecklistTableRow[]) => {
-  const isNsltColumn = header.includes('NSLT');
-  const isLpColumn = header === 'LP ID';
+const getLinkValue = (row: ChecklistTableRow, columnId: string): string | null => {
+  const fromColumnMap = row.columnValues?.[columnId];
+  if (fromColumnMap) {
+    return fromColumnMap;
+  }
 
-  if (!isNsltColumn && !isLpColumn) {
+  if (columnId === COLUMN_IDS.NSLT_ID) return row.nsltId;
+  if (columnId === COLUMN_IDS.NSLT_A_ID) return row.nsltAId;
+  if (columnId === COLUMN_IDS.NSLT_B_ID) return row.nsltBId;
+  if (columnId === COLUMN_IDS.LP_ID) return row.lpId;
+  return null;
+};
+
+const openAllLinksFromColumn = (column: ChecklistColumn, rows: ChecklistTableRow[]) => {
+  if (column.kind !== 'link') {
     return;
   }
 
@@ -20,30 +31,21 @@ const openAllLinksFromColumn = (header: string, rows: ChecklistTableRow[]) => {
   const urls: string[] = [];
 
   rows.forEach(row => {
-    let id: string | null = null;
-
-    if (header === 'NSLT ID') {
-      id = row.nsltId;
-    } else if (header === 'NSLT A ID') {
-      id = row.nsltAId;
-    } else if (header === 'NSLT B ID') {
-      id = row.nsltBId;
-    } else if (header === 'LP ID') {
-      id = row.lpId;
+    const id = getLinkValue(row, column.id);
+    if (!id) {
+      return;
     }
 
-    if (!id) return;
-
-    let url: string;
-    if (isNsltColumn) {
-      url = `${domain}/news_email.php?id=${id}`;
-    } else {
+    if (column.id === COLUMN_IDS.LP_ID) {
       const shopId = getShopId(row.shop);
-      if (!shopId) return;
-      url = `${domain}/shop_content.php?id=${id}&shop_id=${shopId}`;
+      if (!shopId) {
+        return;
+      }
+      urls.push(`${domain}/shop_content.php?id=${id}&shop_id=${shopId}`);
+      return;
     }
 
-    urls.push(url);
+    urls.push(`${domain}/news_email.php?id=${id}`);
   });
 
   // Open all URLs in new tabs
@@ -52,17 +54,15 @@ const openAllLinksFromColumn = (header: string, rows: ChecklistTableRow[]) => {
   });
 };
 
-export const TableHeaders = ({ headers, rows }: TableHeadersProps) => {
-  const clickableHeaders = ['NSLT ID', 'NSLT A ID', 'NSLT B ID', 'LP ID'];
-
-  return headers.map(key => {
-    const isClickable = clickableHeaders.includes(key);
+export const TableHeaders = ({ columns, rows }: TableHeadersProps) => {
+  return columns.map(column => {
+    const isClickable = column.kind === 'link' && column.openAllLinks;
 
     return (
       <div
-        key={key}
+        key={column.id}
         className={styles.headerCell}
-        onClick={() => isClickable && openAllLinksFromColumn(key, rows)}
+        onClick={() => isClickable && openAllLinksFromColumn(column, rows)}
         style={{
           cursor: isClickable ? 'pointer' : 'default',
           display: 'flex',
@@ -70,9 +70,9 @@ export const TableHeaders = ({ headers, rows }: TableHeadersProps) => {
           justifyContent: 'center',
           gap: '4px',
         }}
-        title={isClickable ? `Click to open all ${key} links` : ''}
+        title={isClickable ? `Click to open all ${column.label} links` : ''}
       >
-        {key}
+        {column.label}
         {isClickable && <Icon icon="charm:link-external" width="12" height="12" style={{ marginLeft: '2px' }} />}
       </div>
     );

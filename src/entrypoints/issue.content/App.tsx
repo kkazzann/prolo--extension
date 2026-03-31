@@ -17,6 +17,7 @@ import {
 } from './api/issueData';
 import type { ChecklistTableData, IssueInfoViewModel, IssueLink } from './lib/types';
 import { fetchChecklists, mapChecklistsToTableData } from './api/checklists';
+import { getIssueModePlugin } from './api/issueModePlugins';
 
 const cookieOptions = { maxAge: 7 * 24 * 60 * 60 };
 
@@ -128,6 +129,7 @@ const IssueAppContent = () => {
             tableData={tableData}
             issueId={issueId}
             mode={issueInfo.mode}
+            showDashboardActions={getIssueModePlugin(issueInfo.mode).showDashboardActions}
             issueLinks={issueLinks}
             issueDate={issueInfo.issueDate}
             onGeneratedChecklist={loadIssueData}
