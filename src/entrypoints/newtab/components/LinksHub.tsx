@@ -126,8 +126,8 @@ const links = {
       },
       {},
       {
-        name: 'NSLT Timeline',
-        url: 'https://docs.google.com/spreadsheets/d/1rSdc-BN1OfulThdVKj15Q6J-LWrIH4T5AMDg4A9WNuU',
+        name: 'NSLT Timeline (updated)',
+        url: 'https://docs.google.com/spreadsheets/d/1zoZOh1pWgguM5--8hbU3uslv06zzdoTc8Z0nBXewrLQ/',
         icon: 'simple-icons:googlesheets',
       },
       {
