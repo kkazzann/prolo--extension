@@ -26,6 +26,13 @@ const links = {
     name: 'Development',
     icon: 'solar:code-circle-bold',
     links: [
+      {
+        name: 'Projects Board',
+        url: 'https://www.figma.com/design/PF7tZr72XquHOSrWwQXtSd/Projects?node-id=1-2&t=fUoMeTQTw1Wpz9Yz-1',
+        icon: 'ri:figma-fill'
+
+      },
+      {},
       { name: 'Constructor', url: 'https://github.com/BelianiRafal/Constructor-2.0-FINAL_Edition', icon: 'simple-icons:github' },
       { name: 'EXT', url: 'https://github.com/BelianiRafal/Extension/', icon: 'simple-icons:github' },
       { name: 'Translations API', url: 'https://github.com/kkazzann/translations-api', icon: 'simple-icons:github' },
@@ -126,8 +133,8 @@ const links = {
       },
       {},
       {
-        name: 'NSLT Timeline',
-        url: 'https://docs.google.com/spreadsheets/d/1rSdc-BN1OfulThdVKj15Q6J-LWrIH4T5AMDg4A9WNuU',
+        name: 'NSLT Timeline (updated)',
+        url: 'https://docs.google.com/spreadsheets/d/1zoZOh1pWgguM5--8hbU3uslv06zzdoTc8Z0nBXewrLQ/',
         icon: 'simple-icons:googlesheets',
       },
       {
